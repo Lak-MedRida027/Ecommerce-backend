@@ -11,22 +11,14 @@ const ApiError = require("./utils/apiError");
 const globalError = require("./middlewares/errormiddleware");
 const dbconnection = require("./config/database");
 
-//* import Route
-const categoryRoute = require("./Routers/categoryRoute");
-const subCategoryRoute = require("./Routers/subCategoryRoute");
-const brandRoute = require("./Routers/brandRoute");
-const productRoute = require("./Routers/productRoute");
-const userRoute = require("./Routers/userRoute");
-const authRoute = require("./Routers/authRoute");
-const reviewRoute = require("./Routers/reviewRoute");
-const wishlistRoute = require("./Routers/wishlistRoute");
-const addressRoute = require("./Routers/addressRoute");
+//* import mount Route
+const mountRoute = require('./Routers')  //! automatically will read the index file
 
 //* Connect with DB
 dbconnection();
 
 //*  express app
-const app = express(); //* create our express app
+const app = express();
 app.use(cors())
 app.options('*', cors())
 app.use(express.static(path.join(__dirname, 'uploads')))  //* to allowe serving for images in uploads file
@@ -43,15 +35,7 @@ if (process.env.NODE_ENV === "development") {
 
 
 //* Mount Routers
-app.use("/api/v1/categories" , categoryRoute);
-app.use("/api/v1/subcategories" , subCategoryRoute);
-app.use("/api/v1/brands" , brandRoute);
-app.use("/api/v1/products" , productRoute);
-app.use("/api/v1/users" , userRoute);
-app.use("/api/v1/auth" , authRoute);
-app.use("/api/v1/reviews" , reviewRoute);
-app.use("/api/v1/wishlist" , wishlistRoute);
-app.use("/api/v1/addresses" , addressRoute);
+mountRoute(app);
 
 app.all('*' , (req ,res ,next) =>{
   //* Create error
