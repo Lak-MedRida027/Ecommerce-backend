@@ -4,6 +4,7 @@ const express = require("express");
 const morgan = require("morgan"); //*  used to show the req in terminal with status code
 const dotenv = require("dotenv"); //*  to read from config.env file
 const cors = require("cors");
+const compression = require('compression')
 
 dotenv.config({ path: "config.env" }); //* if the file was named .env this step be ignored
 
@@ -19,9 +20,16 @@ dbconnection();
 
 //*  express app
 const app = express();
+
+//* Enable cross-domains to access
 app.use(cors())
 app.options('*', cors())
-app.use(express.static(path.join(__dirname, 'uploads')))  //* to allowe serving for images in uploads file
+
+//* Compress all res
+app.use(compression())
+
+//* to allowe serving for images in uploads file
+app.use(express.static(path.join(__dirname, 'uploads')))  
 
 //* Midellewares
 app.use(express.json());
