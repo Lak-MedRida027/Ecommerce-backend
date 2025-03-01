@@ -182,26 +182,36 @@ exports.createCheckoutSession = asyncHandler(async (req, res, next) => {
 });
 
 exports.webhookCheckout = asyncHandler(async (req, res, next) => {
-  console.log("hello...")
+  console.log("Processing webhook...");
   const sig = req.headers["stripe-signature"];
 
+  // Make sure you have access to the raw body
+  // Note: For Express, you need to configure it to not parse the body for this route
+  // Example: app.use('/webhook-route', express.raw({type: 'application/json'}));
+  
   let event;
 
   try {
     event = stripe.webhooks.constructEvent(
-      req.body,
+      req.body, // This should be the raw body, not parsed JSON
       sig,
       process.env.STRIPE_WEBHOOK_SECRET_KEY
     );
+    
+    console.log("Webhook verified successfully");
+    
+    if (event.type === "checkout.session.completed") {
+      console.log("Checkout session completed, creating order...");
+      // Handle the checkout.session.completed event
+      // Create your order here...
+    }
+    
+    // Return a 200 response to acknowledge receipt of the event
+    res.status(200).json({ received: true });
+    
   } catch (err) {
-    console.log("ERROR...")
+    console.error(`Webhook Error: ${err.message}`);
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
-
-  if(event){console.log(event)}else{console.log("ERROR..........")}
-
-  if(event.type === "checkout.session.completed"){
-    console.log("Create order here.....")
-  }
-
 });
+
