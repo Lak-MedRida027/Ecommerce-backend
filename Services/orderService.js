@@ -6,6 +6,7 @@ const factory = require("./handlerFactory");
 
 const Product = require("../Modules/productModule");
 const Cart = require("../Modules/cartModule");
+const User = require("../Modules/userModule");
 const Order = require("../Modules/orderModule");
 
 // @desc    create cash order
@@ -181,13 +182,42 @@ exports.createCheckoutSession = asyncHandler(async (req, res, next) => {
   res.status(200).json({ status: "success", session });
 });
 
-exports.webhookCheckout = asyncHandler(async (req, res, next) => {
-  console.log("Processing webhook...");
-  const sig = req.headers["stripe-signature"];
+const createCardOrder = async(session)=> {
+  const cartId = session.client_reference_id
+  const shippingAddress = session.metadata
+  const orderPrice = session.amount_total / 100
 
-  // Make sure you have access to the raw body
-  // Note: For Express, you need to configure it to not parse the body for this route
-  // Example: app.use('/webhook-route', express.raw({type: 'application/json'}));
+  const cart = await Cart.findById(cartId);
+  const user = await User.findOne({email: session.customer_email})
+
+  // Create Order
+  const order = await Order.create({
+    user: user._id,
+    cartItems: cart.cartItems,
+    shippingAddress,
+    totalOrderPrice: orderPrice,
+    isPaid: true,
+    paidAt: Date.now(),
+    paymentMethod: "card"
+  });
+
+    // Dec product quantity, Inc product sold
+    if (order) {
+      const bulkOption = cart.cartItems.map((item) => ({
+        updateOne: {
+          filter: { _id: item.product },
+          update: { $inc: { quantity: -item.quantity, sold: +item.quantity } },
+        },
+      }));
+      await Product.bulkWrite(bulkOption, {});
+  
+    // Clear cart
+      await Cart.findByIdAndDelete(cartId);
+    }
+}
+
+exports.webhookCheckout = asyncHandler(async (req, res, next) => {
+  const sig = req.headers["stripe-signature"];
   
   let event;
 
@@ -197,20 +227,15 @@ exports.webhookCheckout = asyncHandler(async (req, res, next) => {
       sig,
       process.env.STRIPE_WEBHOOK_SECRET_KEY
     );
-    
-    console.log("Webhook verified successfully");
-    
-    if (event.type === "checkout.session.completed") {
-      console.log("Checkout session completed, creating order...");
-      // Handle the checkout.session.completed event
-      // Create your order here...
-    }
-    
-    // Return a 200 response to acknowledge receipt of the event
-    res.status(200).json({ received: true });
-    
   } catch (err) {
-    console.error(`Webhook Error: ${err.message}`);
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
+
+  if (event.type === "checkout.session.completed") {
+    // 1)- Create the order
+    createCardOrder(event.data.object)
+  }
+
+
+  res.status(200).json({ received: true });
 });
