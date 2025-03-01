@@ -14,6 +14,7 @@ const dbconnection = require("./config/database");
 
 //* import mount Route
 const mountRoute = require('./Routers')  //! automatically will read the index file
+const { webhookCheckout } = require('./Services/orderService')
 
 //* Connect with DB
 dbconnection();
@@ -27,6 +28,9 @@ app.options('*', cors())
 
 //* Compress all res
 app.use(compression())
+
+//* Webhook checkout 
+app.post('/webhook-checkout', express.json({type: 'application/json'}), webhookCheckout)
 
 //* to allowe serving for images in uploads file
 app.use(express.static(path.join(__dirname, 'uploads')))  
