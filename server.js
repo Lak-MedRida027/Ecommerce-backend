@@ -30,7 +30,7 @@ app.options('*', cors())
 app.use(compression())
 
 //* Webhook checkout 
-app.post('/webhook-checkout', express.json({type: 'application/json'}), webhookCheckout)
+app.post('/webhook-checkout', express.raw({type: 'application/json'}), webhookCheckout)
 
 //* to allowe serving for images in uploads file
 app.use(express.static(path.join(__dirname, 'uploads')))  
