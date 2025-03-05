@@ -5,6 +5,10 @@ const morgan = require("morgan"); //*  used to show the req in terminal with sta
 const dotenv = require("dotenv"); //*  to read from config.env file
 const cors = require("cors");
 const compression = require('compression')
+const rateLimit = require('express-rate-limit');
+const hpp = require('hpp');
+const mongoSanitize = require('express-mongo-sanitize');
+const xss = require('xss-clean')
 
 dotenv.config({ path: "config.env" }); //* if the file was named .env this step be ignored
 
@@ -36,7 +40,7 @@ app.post('/webhook-checkout', express.raw({type: 'application/json'}), webhookCh
 app.use(express.static(path.join(__dirname, 'uploads')))  
 
 //* Midellewares
-app.use(express.json());
+app.use(express.json({ limit: "20kb" }));
 
 if (process.env.NODE_ENV === "development") {
   //* detect our node env
@@ -44,7 +48,21 @@ if (process.env.NODE_ENV === "development") {
   console.log(`mode: ${process.env.NODE_ENV}`);
 }
 
+//* To sanitize the data
+app.use(mongoSanitize());
+app.use(xss())
 
+//* Limit each IP to 100 requests per `window` (here, per 15 minutes).
+const limiter = rateLimit({
+	windowMs: 15 * 60 * 1000, // 15 minutes
+	limit: 5, 
+  message: { error: 'Too many requests, please try again later.' }
+})
+
+app.use("/api", limiter)
+
+//* Middleware to protect against HTTP Parameter Pollution attacks
+app.use(hpp({ whitelist: [ 'price', 'sold', 'ratingsAverage', 'ratingsQuantity', 'quantity'] }));
 
 //* Mount Routers
 mountRoute(app);
