@@ -1,31 +1,34 @@
-# Course Material and FAQ for my NodeJS - Build a Full E-Commerce RESTful APIs (بالعربي) 
+# Ecommerce Backend Server
 
-This repo contains every course section in a single branch  and the finished project files for all the projects contained in the master branch
+This repository contains the backend server for an ecommerce website. The server is built with Node.js, Express, and MongoDB, and it includes all the essential functionalities required for a modern ecommerce platform, such as user authentication, authorization, online payments, password reset, and CRUD operations.
 
-Choose the section branch that you study, and **final code to compare it with your own code whenever something doesn't work**!
+## Features
 
-## Join To Discord Channel For Updates [discord](https://discord.gg/e2nwBNU2q9) 
+- **User Authentication**: Secure user registration and login using JWT (JSON Web Tokens).
+- **Authorization**: Role-based access control to ensure only authorized users can perform certain actions.
+- **Online Payment Integration**: Seamless payment processing using Stripe.
+- **Password Reset**: Secure password reset functionality using Nodemailer to send reset links via email.
+- **CRUD Operations**: Full CRUD (Create, Read, Update, Delete) operations for products, users, orders, and more.
+- **Environment Variables**: Configuration using `.env` files for sensitive data like API keys and database credentials.
+- **Error Handling**: Centralized error handling for better debugging and user experience.
+- **API Documentation**: Detailed API documentation using Swagger.
 
+## Technologies Used
 
-👇 **_Please read the following Frequently Asked Questions (FAQ) carefully before starting the course_** 👇
+- **Node.js**: JavaScript runtime for building the server.
+- **Express**: Web framework for Node.js.
+- **MongoDB**: NoSQL database for storing data.
+- **Mongoose**: ODM (Object Data Modeling) library for MongoDB.
+- **JWT**: JSON Web Tokens for secure authentication.
+- **Stripe**: Payment processing for handling online payments.
+- **Nodemailer**: For sending emails, including password reset links.
+- **Bcrypt**: For hashing passwords.
+- **Dotenv**: For managing environment variables.
+- **Swagger**: For API documentation.
 
-## FAQ
+## Installation
 
-### Q1: How do I download the files?
-
-**A:** If you're new to GitHub and just want to download the entire code, hit the green button saying "Code", and then choose the "Download ZIP" option.
-
-
-### Q2: I'm stuck in one of the projects. Where do I get help?
-
-**A:** Have you actually tried to fix the problem on your own? Have you compared your code to the final code? If you failed fixing your problem, please **post a detailed description of the problem to the Q&A area of that video over at Udemy**, along with a [codepen](https://codepen.io/pen/) containing your code. You will get help there. Please don't send me a personal message or email to fix coding problems.
-
-
-### Q3: I want to put the project in my portfolio. Is that allowed?
-
-**A:** Absolutely! Just make sure you actually built it yourself by following the course, and that you understand what you did. What is **not allowed** is that you create your own course/videos/articles based on this course's content!
-
-
-### Q4: Do you accept pull requests?
-
-**A:** No, for the simple reason that I want this repository to contain the _exact_ same code that is shown in the videos. However, please feel free to add an issue if you found one.
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/your-username/ecommerce-backend.git
+   cd ecommerce-backend
