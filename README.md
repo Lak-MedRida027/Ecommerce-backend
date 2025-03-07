@@ -32,3 +32,53 @@ This repository contains the backend server for an ecommerce website. The server
    ```bash
    git clone https://github.com/your-username/ecommerce-backend.git
    cd ecommerce-backend
+   ```
+2. **Navigate to the project directory**:
+   ```bash
+   cd ecommerce-backend
+   ```
+3. **Install the required dependencies**:
+   ```bash
+   npm install
+   ```
+4. **Set up environment variables**:
+   Create a `.env` file in the root directory.
+   Add the following variables:
+   ```env
+   PORT=3000
+   MONGODB_URI=mongodb://localhost:27017/ecommerce
+   JWT_SECRET=your_jwt_secret
+   STRIPE_SECRET_KEY=your_stripe_secret_key
+   EMAIL_USER=your_email@gmail.com
+   EMAIL_PASS=your_email_password
+   ```
+5. **Run the server**:
+   ```bash
+   node server.js
+   ```
+## API Endpoints
+
+### Authentication
+- **POST** `/api/auth/register` - Register a new user
+- **POST** `/api/auth/login` - Login a user
+- **POST** `/api/auth/reset-password` - Request password reset
+- **PATCH** `/api/auth/reset-password/:token` - Reset password using token
+
+### Products
+- **GET** `/api/products` - Get all products
+- **POST** `/api/products` - Create a new product (admin only)
+- **PUT** `/api/products/:id` - Update a product (admin only)
+- **DELETE** `/api/products/:id` - Delete a product (admin only)
+
+### Orders
+- **GET** `/api/orders` - Get all orders (admin only)
+- **POST** `/api/orders` - Create a new order
+- **GET** `/api/orders/:id` - Get order details
+
+## Contributing
+
+Contributions are welcome! Please open an issue or submit a pull request for any enhancements or bug fixes.
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
